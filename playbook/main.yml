@@ -1,0 +1,21 @@
+---
+- name: Configure webserver with Apache
+  hosts: webservers
+  become: true
+  gather_facts: false
+
+  tasks:
+  - name: Install Apache 
+    apt: name=apache2 state=present update_cache=yes
+  
+  - name: "Start Apache"
+    service: "name=apache2 state=started enabled=yes"
+
+  - name: set server timezone to Africa/Lagos timezone
+    command: timedatectl set-timezone Africa/Lagos
+
+  - name: create html index file
+    shell: echo "<h3>Welcome to Server $(hostname). Today's date is $(date).</h3>" > /var/www/html/index.html
+      
+  - name: restart apache
+    service: name=apache2 state=restarted
